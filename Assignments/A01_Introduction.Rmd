@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: "Analise Lindborg"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -22,21 +22,21 @@ The completed exercise is due on <>.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: I am self-trained in R and have used it for data management, analysis and visualization in both research and internships.I have used Git only for learning some code but have never signed up for an account. 
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I feel somewhat confident about data management and visualization coding in R. 
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: Not necessarily apprehensive, but I would like to gain a much better understanding of the fundamentals of coding and data analytics, best practices, new coding techniques, etc. Being self taught, I can do the coding but often feel I am missing the fundamentals of why I am doing/have to do certain things. 
 
 
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository  and that you have updated your course README file. 
 
-> Answer: 
+> Answer: https://github.com/arl57/Environmental_Data_Analytics_2021
 
 
