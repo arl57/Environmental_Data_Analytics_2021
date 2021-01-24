@@ -29,3 +29,4 @@ vignettes/*.pdf
 *.Rproj
 *_KEY.Rmd
 *.pptx
+.DS_Store
