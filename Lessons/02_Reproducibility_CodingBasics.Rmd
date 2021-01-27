@@ -1,6 +1,6 @@
 ---
 title: "2: Reproducibility and Coding Basics"
-author: "Environmental Data Analytics | Kateri Salk"
+author: "Environmental Data Analytics | John Fay and Luana Lima | Developed by Kateri Salk"
 date: "Spring 2021"
 output: pdf_document
 geometry: margin=2.54cm
@@ -98,7 +98,7 @@ median(5, 4, 6, 4, 6)
 ```
 
 ### Objects
-You can create R objects with an *assignment* statement. The indicator for an assigment is the `<-` symbol. A good way to think about the meaning of an assignment statement is "object name (lefthand side) gets value (righthand side)."
+You can create R objects with an *assignment* statement. The indicator for an assignment is the `<-` symbol. A good way to think about the meaning of an assignment statement is "object name (lefthand side) gets value (righthand side)."
 
 A quick note: in many situations, a `=` sign will substitute for a `<-`. Resist this temptation! This will be confusing later, when `=` means something else. 
 
@@ -226,7 +226,7 @@ meal2 <- recipe4(2); meal2
 meal3 <- recipe5(3); meal3
 
 recipe6 <- function(x){
-  ifelse(x<3, x*2, x/2)
+  ifelse(x<3, x*2, x/2) #log_exp, if TRUE, if FALSE
   
 }
 
