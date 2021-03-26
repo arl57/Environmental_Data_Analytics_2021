@@ -25,7 +25,11 @@ This exercise accompanies the lessons in Environmental Data Analytics (ENV872L) 
 6. After Knitting, please submit the completed exercise (PDF file) in Sakai. Please add your last name into the file name (e.g., "Fay_A10_SpatialAnalysis.pdf") prior to submission.
 
 ## DATA WRANGLING
+```{r setup}
+## My document will not knit without this code
+knitr::opts_knit$set(root.dir = '/Users/analiselindborg/Desktop/Desktop - Analise’s MacBook Pro/Data Analytics/Environmental_Data_Analytics_2021')
 
+```
 ### Set up your session
 
 1. Check your working directory

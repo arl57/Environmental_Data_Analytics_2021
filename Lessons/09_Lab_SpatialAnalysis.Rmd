@@ -141,11 +141,15 @@ Aggregate the HUC_8 data on the `DWQ_Basin` attribute, computing the sum of the 
 
 
 #Summarize on DWQ Basin value
-
+huc2_sf <- huc8_sf %>%
+  group_by(DWQ_Basin) %>%
+  summarize(ACRES = sum(ACRES),
+            SQ_MILE = sum(SQ_MILE))
 
 
 #Map the data
-
+mapview(huc2_sf,
+        zcol= ACRES)
 
 ```
 
