@@ -1,6 +1,6 @@
 ---
 title: "Assignment 10: Data Scraping"
-author: "Student Name"
+author: "Analise Lindborg"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -29,9 +29,28 @@ The completed exercise is due on Tuesday, April 6 at 11:59 pm.
 * Load the packages `tidyverse`, `rvest`, and any others you end up using.
 * Set your ggplot theme
 
+```{r setup}
+## My document will not knit without this code
+knitr::opts_knit$set(root.dir = '/Users/analiselindborg/Desktop/Desktop - Analise’s MacBook Pro/Data Analytics/Environmental_Data_Analytics_2021')
+
+```
+
 ```{r, message = FALSE}
 #1
+getwd()
+library(tidyverse)
+library(rvest)
+library(lubridate)
 
+theme <- 
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        text = element_text(color = "black", size = 10),
+        axis.text.x = element_text(color = "black"),
+        axis.text.y = element_text(color = "black"))
+
+theme_set(theme)
 
 ```
 
@@ -45,7 +64,7 @@ Indicate this website as the as the URL to be scraped.
 
 ```{r set.the.scraping.website}
 #2
-
+webpage <- read_html("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2019")
 
 ```
 
@@ -63,8 +82,21 @@ In the code chunk below scrape these values into the supplied variable names.
 
 ```{r scrape.the.data}
 #3
+system <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% 
+  html_text()
 
+pswid <- webpage %>% 
+  html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% 
+  html_text()
 
+owner <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% 
+  html_text()
+
+values <- webpage %>%
+  html_nodes("th~ td+ td") %>%
+  html_text
 ```
 
 
@@ -76,12 +108,28 @@ In the code chunk below scrape these values into the supplied variable names.
 
 ```{r create.a.dataframe.from.scraped.data}
 #4
+df_withdrawals <- data.frame("Month" = c("January", "May", "September", "February", 
+                                         "June", "October", "March", "July", 
+                                         "November", "April", "August", "December"),
+                             "Year" = rep(2019,12), 
+                             "Max_Monthly_Withdrawals_MGD" = as.numeric(values))
 
-
+df_withdrawals <- df_withdrawals %>% 
+  mutate(System_Name = !!system,
+         PSWID = !!pswid,
+         Owner = !!owner,
+         Date = my(paste(Month,"-",Year)))
 
 #5
-
-
+ggplot(df_withdrawals, aes(x=Date, y =Max_Monthly_Withdrawals_MGD)) +
+  geom_point() +
+  geom_line() +
+  scale_x_date(date_breaks = "1 month", date_labels = "%m-%Y") +
+  labs(title = "Maximum Water Withdrawals in 2019 for Durham, NC", 
+       x = "Date", 
+       y = "Maximum Withdrawal (MGD)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme()
 
 ```
 
@@ -89,8 +137,49 @@ In the code chunk below scrape these values into the supplied variable names.
 
 ```{r construct.a.scraping.function}
 #6.
-
-
+DEQ.scrape <- function(year, pswid){
+  
+  #create web address
+  webpage <- read_html(paste0("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=",
+                              pswid, "&", "year=", year))
+  
+  #set tags
+  system_tag <- 'div+ table tr:nth-child(1) td:nth-child(2)'
+  pswid_tag <- 'td tr:nth-child(1) td:nth-child(5)'
+  owner_tag <- 'div+ table tr:nth-child(2) td:nth-child(4)'
+  values_tag <- 'th~ td+ td'
+  
+  #pull in variables
+  system <- webpage %>% 
+  html_nodes(system_tag) %>% 
+  html_text()
+  
+  pswid <- webpage %>% 
+  html_nodes(pswid_tag) %>% 
+  html_text()
+  
+  owner <- webpage %>% 
+  html_nodes(owner_tag) %>% 
+  html_text()
+  
+  values <- webpage %>%
+  html_nodes(values_tag) %>%
+  html_text
+  
+  #create df
+  df_withdrawals <- data.frame("Month" = c("January", "May", "September", "February", 
+                                           "June", "October", "March", "July", 
+                                           "November", "April", "August", "December"),
+                             "Year" = rep(year,12), 
+                             "Max_Monthly_Withdrawals_MGD" = as.numeric(values)) %>%
+    mutate(System_Name = !!system,
+         PSWID = !!pswid,
+         Owner = !!owner,
+         Date = my(paste0(Month,"-",Year)))
+  
+  #return df
+  return(df_withdrawals)
+}
 
 ```
 
@@ -98,16 +187,44 @@ In the code chunk below scrape these values into the supplied variable names.
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7
+#2015 durham data
+withdrawals_2015 <- DEQ.scrape(2015, "03-32-010")
 
+#plot
+ggplot(withdrawals_2015, aes(x=Date, y=Max_Monthly_Withdrawals_MGD)) +
+  geom_point() +
+  geom_line() +
+  scale_x_date(date_breaks = "1 month", date_labels = "%m-%Y") +
+  labs(title = "Maximum Water Withdrawals in 2015 for Durham, NC",
+       x = "Date", 
+       y = "Maximum Withdrawal (MGD)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme()
 
 ```
 
 8. Use the function above to extract data for Asheville (PWSID = 01-11-010) in 2015. Combine this data with the Durham data collected above and create a plot that compares the Asheville to Durham's water withdrawals.
 
-```{r fetch.and.plot.Durham.2015.data}
+```{r fetch.and.plot.Asheville.2015.data}
 #8
+#Asheville data
+withdrawals_asheville <- DEQ.scrape(2015, "01-11-010")
 
+#combine data
+withdrawals_combined <- rbind(withdrawals_2015, withdrawals_asheville)
 
+#plot
+ggplot(withdrawals_combined, aes(x=Date, y =Max_Monthly_Withdrawals_MGD, color=System_Name)) +
+  geom_point() +
+  geom_line() +
+  scale_color_viridis_d(begin = 0.5, end = 0, name="City") +
+  scale_x_date(date_breaks = "1 month", date_labels = "%m-%Y") +
+  labs(title = "Maximum Water Withdrawals in 2015 for Asheville, NC and Durham, NC", 
+       x = "Date", 
+       y = "Maximum Withdrawal (MGD)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.text = ) +
+  theme()
 ```
 
 
@@ -115,8 +232,27 @@ In the code chunk below scrape these values into the supplied variable names.
 
 ```{r}
 #9
+years = rep(2010:2019)
+pswid = "01-11-010"
 
+withdrawals_asheville_all <- lapply(X = years,
+                  FUN = DEQ.scrape,
+                  pswid=pswid)
 
+withdrawals_final <- bind_rows(withdrawals_asheville_all)
+
+ggplot(withdrawals_final, aes(x=Date, y=Max_Monthly_Withdrawals_MGD)) +
+  geom_line() +
+  geom_smooth(method="lm") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(title = "Maximum Monthly Water Withdrawals 2010-2019 for Asheville, NC", 
+       x = "Date", 
+       y = "Maximum Withdrawal (MGD)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.text = ) +
+  theme()
 ```
 
 >Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
+
+>Answer: Yes, there appears to be an increase in water use from 2010-2019 for Asheville. 
