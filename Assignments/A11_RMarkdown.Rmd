@@ -1,12 +1,11 @@
 ---
 title: '11: Crafting Reports'
-author: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kateri
-  Salk
+author: "Analise Lindborg"
 date: "Spring 2021"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
-  pdf_document: default
 ---
 
 ## LESSON OBJECTIVES
